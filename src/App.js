@@ -1,35 +1,35 @@
 import {
-  getTokenPrice,
   useWallet,
-  useProtocolOverview,
+  useCBSProtocolOverview,
+  useAuctionProtocolOverview,
 } from "@lpfinance/solana";
-import { useEffect } from "react";
 
 const App = () => {
   const { wallet } = useWallet([
-    202, 171, 192, 129, 150, 189, 204, 241, 142, 71, 205, 2, 81, 97, 2, 176, 48,
-    81, 45, 1, 96, 138, 220, 132, 231, 131, 120, 77, 66, 40, 97, 172, 91, 245,
-    84, 221, 157, 190, 9, 145, 176, 130, 25, 43, 72, 107, 190, 229, 75, 88, 191,
-    136, 7, 167, 109, 91, 170, 164, 186, 15, 142, 36, 12, 23,
+    49, 253, 112, 197, 220, 25, 220, 83, 173, 233, 47, 252, 169, 27, 60, 159,
+    66, 43, 213, 38, 189, 223, 231, 40, 163, 72, 28, 181, 92, 220, 204, 195,
+    247, 166, 163, 114, 165, 229, 128, 176, 108, 154, 18, 36, 65, 110, 113, 189,
+    159, 66, 252, 110, 203, 226, 78, 82, 241, 183, 67, 217, 255, 157, 36, 144,
   ]);
-  const { TotalSupply, TotalBorrowed, TVL, NetLTV } =
-    useProtocolOverview(wallet);
-  console.log(TotalSupply, TotalBorrowed, TVL, NetLTV);
-  useEffect(() => {
-    const callApi = async () => {
-      const { TokenPriceList } = await getTokenPrice();
+  const { netDeposit, netBorrow, cbsTVL, systemLTV } =
+    useCBSProtocolOverview(wallet);
 
-      console.log(TokenPriceList);
-    };
-    callApi();
-  }, []);
+  const { auctionAPY, netLiquidatorFunds, lastEpochProfit } =
+    useAuctionProtocolOverview(wallet);
 
   return (
     <div>
-      <p>TotalSupply: - {TotalSupply}</p>
-      <p>TotalBorrowed: - {TotalBorrowed}</p>
-      <p>TVL: - {TVL}</p>
-      <p>NetLTV: - {NetLTV}</p>
+      <h1>Borrow cbs details</h1>
+      <p>TotalSupply: - {netDeposit}</p>
+      <p>TotalBorrowed: - {netBorrow}</p>
+      <p>TVL: - {cbsTVL}</p>
+      <p>NetLTV: - {systemLTV}</p>
+
+      <h2>Auction cbs details</h2>
+      <p>CBS Supply: - {netDeposit}</p>
+      <p>APY: - {auctionAPY}</p>
+      <p>Last Epoch Profit : - {lastEpochProfit}</p>
+      <p>Liquidator Funds: - {netLiquidatorFunds}</p>
     </div>
   );
 };
