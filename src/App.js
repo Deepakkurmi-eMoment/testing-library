@@ -1,7 +1,9 @@
+import React, { useState, useEffect } from "react";
 import {
   useWallet,
   useCBSProtocolOverview,
   useAuctionProtocolOverview,
+  getLiquidateList,
 } from "@lpfinance/solana";
 
 const App = () => {
@@ -17,6 +19,21 @@ const App = () => {
   const { auctionAPY, netLiquidatorFunds, lastEpochProfit } =
     useAuctionProtocolOverview(wallet);
 
+  const [LiquidateList, setLiquidateList] = useState({
+    count: null,
+    List: [],
+  });
+
+  console.log(LiquidateList);
+
+  useEffect(() => {
+    const CallLiquidate = async () => {
+      const { count, List } = await getLiquidateList();
+      setLiquidateList({ ...LiquidateList, count, List });
+    };
+    CallLiquidate();
+  }, []);
+
   return (
     <div>
       <h1>Borrow cbs details</h1>
@@ -30,6 +47,22 @@ const App = () => {
       <p>APY: - {auctionAPY}</p>
       <p>Last Epoch Profit : - {lastEpochProfit}</p>
       <p>Liquidator Funds: - {netLiquidatorFunds}</p>
+
+      <h2>Liquidate details</h2>
+      <p>Count: - {LiquidateList.count}</p>
+      <p>LiquidateList ----</p>
+      <ul>
+        {LiquidateList?.List?.map((item, num) => {
+          return (
+            <div key={num} style={{ marginTop: "20px" }}>
+              <li>address- {item.address}</li>
+              <li>Collateral- {item.Collateral}</li>
+              <li>Debt- {item.Debt}</li>
+              <li>LTV- {item.LTV}</li>
+            </div>
+          );
+        })}
+      </ul>
     </div>
   );
 };
